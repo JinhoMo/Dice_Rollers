@@ -25,11 +25,33 @@ def partition(symbol = "-", length = 77, middle = "") -> str:
     p = (lambda s, l: s * (l // 2))(symbol, length)
     return symbol * length if middle == "" else f"{p} {middle} {p}"
 
-scores = []
+def gameEnded():
+    """Print Game end message"""
+    print(partition(middle = "Gamed ended"), partition(), "\n", sep = "\n")
+
+def gameStart(name, ex):
+    """Print the header and game explanation"""
+    print(partition(middle = name), partition(), ex, partition(), sep = "\n")
+
+def gameScores(*names):
+    """Print the entire score board"""
+    global scores
+    print(partition(middle = "Scores"), partition(), sep = "\n")
+    for k, v in scores.items():
+        print(f"{k} - {v}")
+
+scores = {}
+
+#100 Meters
+gameStart("100 Meters", "Throw the first four dice until you are satisfied with the result.\nThen throw the other four dice and proceed in the same manner.\nYou have a maximum of seven throws for both sets.\nThe final scoring will be the total value of the dice, but 6s count negative.")
+final = 0
+
+
+
 
 #110 Meter Hurdles
-print(partition(middle = "110 Meter Hurdles"), partition(), """Throw all five dice, up to 6 times, until you are satisfied with the result.
-The final score will be the total value of all five dice of the last attempt.""", partition(), sep = "\n")
+game = "110 Meter Hurdles"
+gameStart(game, """Throw all five dice, up to 6 times, until you are satisfied with the result.\nThe final score will be the total value of all five dice of the last attempt.""")
 
 final = 0
 for i in range(6):
@@ -43,14 +65,13 @@ for i in range(6):
     if user.lower() == "yes":
         break
 
-scores.append(final)
-print(partition(middle = "Gamed ended"), partition(), "\n", sep = "\n")
+scores[game] = final
+gameEnded()
+
 
 #Pole-Vault
-
-print(partition(middle = "Pole Vault"), partition(), """Jumping starts at the height of 10 and is increased by 2 each turn.\nPlayers take turn for each height or can decide to skip it.
-You have three attempts for each height.\nThrow two to eight dice to equal or exceeds the current height without any 1s.
-The final socre will be the maximum height which was mastered.""", sep = "\n")
+game = "Pole Vault"
+gameStart(game,"""Jumping starts at the height of 10 and is increased by 2 each turn.\nPlayers take turn for each height or can decide to skip it.\nYou have three attempts for each height.\nThrow two to eight dice to equal or exceeds the current height without any 1s.\nThe final socre will be the maximum height which was mastered.""")
 
 height = 10
 nexth = 2
@@ -60,14 +81,14 @@ while True:
     user = input('Would you like to have turn or skip it(please answer with "have" or "skip")?\n')
     if user.lower() == "skip":
         height += nexth
-        print(partition())
         continue
+    print()
     for i in range(3):
         result = 0
         rolls = []
         diceroll = 0
         while True:
-            user = input("\nHow many dice do you want to roll from two to eight dice?\n")
+            user = input("How many dice do you want to roll from two to eight dice?\n")
             try:
                 diceroll = int(user)
                 if not diceroll <=  1 or diceroll >= 9:
@@ -83,13 +104,38 @@ while True:
             TF = True
             print("Dice roll has 1 included.")
         if result < height or TF:
-            print(f"Faild.\n{'Please retry!!' if not i == 2 else ''}\n")
+            print(f"Faild.{'Please retry!!' if not i == 2 else ''}\n")
             continue
         print(f"Passed the height {height}")
         final = height
         break
     if not final == height:
-        scores.append(final)
+        scores[game] = final
         break
     height += nexth
-print(partition(middle = "Game Ended"), partition(), "\n", partition(middle = "Scores"), f"110 Meter Hurdles - {scores[0]}\nPole-Vault - {scores[1]}", sep = "\n")
+gameEnded()
+
+
+#Shot Put
+game = "Shot Put"
+gameStart(game, """Throw one die after the other.\nYou can decide to score at any time.\nIf you throw a 1 you suffer an invalid attempt.\nYou have three attempts.\nThe final score will be the highest score of all three attempts.""")
+subscores = []
+for i in range(3):
+    print(f"Attempt {i + 1}:")
+    score = 0
+    for j in range(8):
+        rolls = roll(1)
+        printDiceRoll(rolls)
+        if 1 in rolls:
+            score = 0
+            break
+        score += rolls[0]
+        user = input("Want to continue(Please answer with yes or no)?\n")
+        if user.lower() == "no":
+            break
+    print(f"The final score of this attempt is {score}.\n")
+    subscores.append(score)
+scores[game] = max(subscores)
+gameEnded()
+
+gameScores()
