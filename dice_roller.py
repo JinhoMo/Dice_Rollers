@@ -1,4 +1,5 @@
 import random
+import time
 def dice() -> int:
     """Return an random integer value."""
     return random.randint(1, 6)
@@ -43,10 +44,46 @@ def gameScores(*names):
 scores = {}
 
 #100 Meters
-gameStart("100 Meters", "Throw the first four dice until you are satisfied with the result.\nThen throw the other four dice and proceed in the same manner.\nYou have a maximum of seven throws for both sets.\nThe final scoring will be the total value of the dice, but 6s count negative.")
+game = "100 Meters"
+gameStart(game, "Throw the first four dice until you are satisfied with the result.\nThen throw the other four dice and proceed in the same manner.\nYou have a maximum of seven throws for both sets.\nFor examle, if you throw six times in frist set, only 1 attempt will remain for next set.\nThe final scoring will be the total value of the dice, but 6s count negative.")
 final = 0
+nextset = False
+attempt = []
+append = attempt.append
+TF = False
+for i in range(7):
+    print(f"\nYou are in {'first' if not nextset else 'second'} set.")
+    if i == 5 and not nextset:
+        print("This is last attempt in first set. The program will automatically move to next set")
+        time.sleep(3)
+        TF = True
+    elif i == 7:
+        print("The last attempt")
+        time.sleep(3)
+    rolls = roll(4)
+    printDiceRoll(rolls, addInFront = "\n")
+    if TF:
+        append(rolls)
+        nextset = True
+        continue
+    elif nextset and i == 6:
+        append(rolls)
+        break
+    user = input("Are you satisfied(Please answer with yes or no)?\n")
+    if user.lower() == "yes" and not nextset:
+        append(rolls)
+        nextset = True
+    elif user.lower() == "yes" and nextset:
+        append(rolls)
+        break
+    
+final = 0
+for i in attempt:
+    negative = i.count(6)
+    final += sum(i) - negative * 6
 
-
+scores[game] = final
+gameEnded()
 
 
 #110 Meter Hurdles
