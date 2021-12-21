@@ -1,6 +1,7 @@
 import random
 import time
 scores = {}
+update = scores.update
 def dice() -> int:
     """Return an random integer value."""
     return random.randint(1, 6)
@@ -134,7 +135,7 @@ def shotPut():
                 break
         print(f"The final score of this attempt is {score}.\n")
         subscores.append(score)
-    scores[game] = max(subscores)
+    final = max(subscores)
     gameEnded()
     return {game : final}
 
@@ -187,4 +188,8 @@ def poleVault():
     gameEnded()
     return {game : final}
 
+update(meters_100())
+update(meterHurdles_110())
+update(shotPut())
+update(poleVault())
 gameScores()
